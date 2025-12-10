@@ -25,7 +25,8 @@ export async function handler(event: any, context: any) {
          * ------------------------ */
         const prompt = taskPrompt.replace("{USER_INPUT}", text);
 
-        const ai = new GoogleGenAI({ apiKey: 'AIzaSyC-G8UYaa8OQ2NIHQbi_7KSSkgxb4Ues7g' });
+        console.log(process.env.GOOGLE_KEY, 'THE ENV')
+        const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_KEY });
 
         const res = await ai.models.generateContent({
             model: "gemini-2.5-flash",
@@ -92,7 +93,7 @@ export async function handler(event: any, context: any) {
             }
         `
 
-        const APItoken = 'eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjU5NDY0NTU5NiwiYWFpIjoxMSwidWlkIjo3NTk1OTc5MywiaWFkIjoiMjAyNS0xMi0wN1QwNToxNzoxNC4yNTJaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTcxNjUzNTUsInJnbiI6InVzZTEifQ.wMPDpwQrTuH-WJo59c6LgRb16qPqHLx_DhygwDwwK4o'
+        const APItoken = process.env.MONDAY_TOKEN
 
         const mondayVars = {
             boardId,
@@ -140,7 +141,7 @@ export async function handler(event: any, context: any) {
         /** --------------------------
          * 3) SEND TO TEAMS CHANNEL
          * ------------------------- */
-        const webHookURL = 'https://e4ccnet.webhook.office.com/webhookb2/6ec4d1dc-0c13-4ffc-8392-e69dce9784d9@1ee78858-bd52-403d-a5ca-01bba9b9377e/IncomingWebhook/7707a449c97346659537c22448c85e59/fe2022b8-ff2a-44bd-bff2-7e657a642f56/V23ykMVedda32U93S6gp0Rkh8s9iMxQ5F5avRu8oWqZwg1'
+        const webHookURL = process.env.TEAMS_WEBHOOK_URL
 
         if (!webHookURL) {
             return {
