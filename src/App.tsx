@@ -26,6 +26,8 @@ function App() {
   const [sprint, setSprint] = useState<string | null>(null)
   const [group, setGroup] = useState<Group | null>(null)
 
+  const [error, setError] = useState<boolean>(false)
+
   function saveSelectedUser(value: User) {
     try {
       localStorage.setItem(
@@ -97,6 +99,12 @@ function App() {
   let stopTimer: ReturnType<typeof setTimeout> | null = null
 
   const startRecognition = async () => {
+
+    if (!user || !group) {
+      setError(true)
+      return
+    }
+
     setIsListening(true)
 
     recognition = new ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition)()
@@ -191,6 +199,10 @@ function App() {
   useEffect(() => {
     if (sendStatus === 'preparing') handleCounter()
   }, [sendStatus])
+
+  useEffect(() => {
+    if (user && group) setError(false)
+  }, [user, group])
 
   return (
     <div className='w-screen h-screen pt-[200px]'>
@@ -331,11 +343,14 @@ function App() {
                     sendStatus === 'idle' && (
                       <div className='w-full h-10 flex justify-start items-center gap-x-5 mt-10'>
                         <UserPicker
+                          error={error}
                           user={user ? user : null}
                           selectUser={selectUser}
                         />
                         <SprintPicker selectSprint={selectSprint} />
-                        <GroupPicker group={group} selectGroup={selectGroup} />
+                        <GroupPicker
+                          error={error}
+                          group={group} selectGroup={selectGroup} />
                       </div>
                     )
                   }
@@ -373,13 +388,13 @@ function RecordingButton({ isListening, startRecognition, stopRecognition }: { i
   )
 }
 
-function UserPicker({ user, selectUser }: { user: User | null, selectUser: (user: User) => void }) {
+function UserPicker({ user, selectUser, error }: { user: User | null, selectUser: (user: User) => void, error: boolean }) {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   return (
     <div className='relative w-[250px]'>
-      <button onClick={() => { setIsOpen((prev) => !prev) }} className='w-full h-full border border-[#595959] rounded-lg'>{user ? user.name : 'Select user'}</button>
+      <button onClick={() => { setIsOpen((prev) => !prev) }} className={`w-full h-full border ${error ? 'border-red-500' : 'border-[#595959]'} rounded-lg`}>{user ? user.name : 'Select user'}</button>
       <AnimatePresence>
         {
           isOpen && (
@@ -484,7 +499,7 @@ function SprintPicker({ selectSprint }: { selectSprint: (sprint: string) => void
   )
 }
 
-function GroupPicker({ group, selectGroup }: { group: Group | null, selectGroup: (group: Group) => void }) {
+function GroupPicker({ group, selectGroup, error }: { group: Group | null, selectGroup: (group: Group) => void, error: boolean }) {
 
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [groups, setGroups] = useState<{ id: string; title: string }[] | null>(null)
@@ -502,7 +517,7 @@ function GroupPicker({ group, selectGroup }: { group: Group | null, selectGroup:
   return (
 
     <div className='relative w-[250px]'>
-      <button onClick={() => { setIsOpen((prev) => !prev) }} className='w-full h-full border border-[#595959] rounded-lg'>{group ? group.title : 'Select group'}</button>
+      <button onClick={() => { setIsOpen((prev) => !prev) }} className={`w-full h-full border ${error ? 'border-red-500' : 'border-[#595959]'} rounded-lg`}>{group ? group.title : 'Select group'}</button>
       <AnimatePresence>
         {
           isOpen && (
