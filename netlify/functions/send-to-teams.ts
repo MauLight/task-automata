@@ -1,3 +1,7 @@
+export const config = {
+    bodyParser: false
+}
+
 import { GoogleGenAI } from '@google/genai';
 import { taskPrompt } from '../../src/common/prompt'
 import axios from 'axios';
