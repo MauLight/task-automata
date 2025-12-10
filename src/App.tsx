@@ -132,6 +132,7 @@ function App() {
   }
 
   const stopRecognition = () => {
+
     if (recognitionRef.current) recognitionRef.current.stop()
     setIsListening(false)
 
@@ -162,6 +163,7 @@ function App() {
       setSendStatus('success')
       setTimeout(() => {
         setSendStatus('idle')
+        transcriptRef.current = null
         setSending(false)
       }, 3000)
       setTranscript(null)
