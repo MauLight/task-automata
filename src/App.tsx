@@ -6,7 +6,6 @@ import { XCircleIcon } from '@heroicons/react/24/outline'
 import { PencilSquareIcon } from '@heroicons/react/24/outline'
 import { CloudArrowUpIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
-import { monday } from './common/monday'
 
 interface User {
   id: string;
@@ -413,21 +412,9 @@ function SprintPicker({ selectSprint }: { selectSprint: (sprint: string) => void
   const [currSprint, setCurrSprint] = useState<{ id: string; name: string } | null>(null)
 
   async function fetchSprints() {
-    const query = `
-    query {
-      boards(ids: 9434600052) {
-        items_page(limit: 200) {
-          items {
-            id
-            name
-          }
-        }
-      }
-    }
-  `
-
-    const data = await monday.request(query)
-    setSprints(data.boards[0].items_page.items)
+    const res = await fetch("/.netlify/functions/get-sprints")
+    const data = await res.json()
+    setSprints(data)
   }
 
   function getCurrentWeekNumber() {
@@ -503,22 +490,9 @@ function GroupPicker({ group, selectGroup }: { group: Group | null, selectGroup:
   const [groups, setGroups] = useState<{ id: string; title: string }[] | null>(null)
 
   async function fetchGroups() {
-    const query = `
-    query {
-  boards(ids: 9137787182) {
-    id
-    name
-    groups {
-      id
-      title
-      color
-      position
-    }
-  }
-}
-  `
-    const data = await monday.request(query)
-    setGroups(data.boards[0].groups)
+    const res = await fetch("/.netlify/functions/get-groups")
+    const data = await res.json()
+    setGroups(data)
   }
 
   useLayoutEffect(() => {
